@@ -1,0 +1,12 @@
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Logs
+**/*.log
+
+# Dependency directory
+node_modules
+
+# Dist folder
+dist/**/*
