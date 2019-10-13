@@ -1,13 +1,23 @@
-'use strict';
+import dotenv from 'dotenv';
+import fs from 'fs';
 
-// import * as nconf from "nconf";
+import log from './logger';
 
-// nconf.env().argv().file({ file: "./config.json" });
+if (fs.existsSync('.env')) {
+  log.debug('Using .env file to supply config environment variables');
+  dotenv.config({ path: '.env' });
+} else if (fs.existsSync('.env.example')) {
+  log.warn('Using .env.example file to supply config environment variables');
+  dotenv.config({ path: '.env.example' });
+}
 
-export class Config {
-  constructor() {}
+export const ENVIRONMENT = process.env.NODE_ENV;
+const prod = ENVIRONMENT === 'production'; // Anything else is treated as 'dev'
 
-  public get(key: string): any {
-    // return nconf.get(key);
-  }
+export const PORT = process.env.NODE_PORT || 3000;
+
+export const { POSTGRES_URI } = process.env;
+if (!POSTGRES_URI) {
+  log.error('No postgres connection string. Set POSTGRES_URI environment variable.');
+  process.exit(1);
 }

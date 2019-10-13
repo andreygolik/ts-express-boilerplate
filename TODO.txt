@@ -1,15 +1,14 @@
 NOW
-[ ] add first hbs (remove ejs)
-[ ] config
-[ ] setup postgres and make it works
+[ ] update winston to version 3 (if needed)
+[ ] reconfigure logger
+
+[ ] setup postgres on dev server and make it works
+[ ] tests
 
 LATER
 [ ] stack trace in dev env only
 [ ] configure eslint
 [ ] include eslint to build command
-[ ] update winston to version 3 (if needed)
-[ ] reconfigure logger
-[ ] tests
 
 DONE
 [x] update all dependencies to latest versions
@@ -18,3 +17,5 @@ DONE
 [x] check if logger works
 [x] dev/prod mode switch
 [x] check if errorhandler works
+[x] add first hbs (remove ejs)
+[x] config

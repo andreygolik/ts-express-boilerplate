@@ -9,17 +9,14 @@ import lusca from 'lusca';
 import { Express } from 'express-serve-static-core';
 
 /*** Configs *****************************************************************/
-import { Config } from './config/config';
+import { ENVIRONMENT, PORT } from './config/config';
 import log from './config/logger';
-
-const config: Config = new Config();
 
 /*** Express configuration ***************************************************/
 const app: Express = express();
 
-app.set('name', config.get('name'));
-app.set('port', config.get('port') || 3000);
-// app.set('env', config.get('env') || 'production');
+app.set('port', PORT);
+app.set('env', ENVIRONMENT);
 
 log.info(`Application started in ${app.get('env')} mode`);
 
