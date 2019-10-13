@@ -1,13 +1,18 @@
-"use strict";
+import { Server } from 'http';
+import errorHandler from 'errorhandler';
 
-import { Express } from "express-serve-static-core";
+import app from './app';
+import log from './config/logger';
 
-const app = require("./app");
+// Error Handler. Provides full stack. Development only.
+if (app.get('env') === 'development') {
+  app.use(errorHandler);
+}
 
 /*** Start Express server ****************************************************/
-const server = app.listen(app.get("port"), "0.0.0.0", () => {
-  console.log(`Server is listening on port ${app.get("port")}`);
-  console.log("Press CTRL-C to stop\n");
+const server: Server = app.listen(app.get('port'), '0.0.0.0', () => {
+  log.info(`Server is listening on port ${app.get('port')}`);
+  log.info('Press CTRL-C to stop');
 });
 
-export = server;
+export default server;

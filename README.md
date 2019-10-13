@@ -1,7 +1,8 @@
 # TypeScript/Express/NodeJS Server Boilerplate
 
 ```
-yarn
-yarn run test
-yarn start 
+npm install
+npm run test
+npm run build
+npm start
 ```

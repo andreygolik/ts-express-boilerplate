@@ -3,10 +3,13 @@
 Thumbs.db
 
 # Logs
-**/*.log
+*.log
 
 # Dependency directory
 node_modules
 
-# Dist folder
+# Ignore built ts files
 dist/**/*
+
+# API keys and secrets
+.env

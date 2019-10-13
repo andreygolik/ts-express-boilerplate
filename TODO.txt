@@ -1,0 +1,20 @@
+NOW
+[ ] add first hbs (remove ejs)
+[ ] config
+[ ] setup postgres and make it works
+
+LATER
+[ ] stack trace in dev env only
+[ ] configure eslint
+[ ] include eslint to build command
+[ ] update winston to version 3 (if needed)
+[ ] reconfigure logger
+[ ] tests
+
+DONE
+[x] update all dependencies to latest versions
+[x] remove jest configuration from package.json (or move)
+[x] merge package.json scripts
+[x] check if logger works
+[x] dev/prod mode switch
+[x] check if errorhandler works

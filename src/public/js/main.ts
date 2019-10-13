@@ -1,4 +1,4 @@
-$(document).ready(function() {
-  // Place JavaScript code here...
-
-});
+// jquery
+// $(document).ready(function() {
+// Place JavaScript code here...
+// });

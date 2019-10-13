@@ -1,13 +1,13 @@
-"use strict";
+'use strict';
 
-import * as nconf from "nconf";
+// import * as nconf from "nconf";
 
-nconf.env().argv().file({ file: "./config.json" });
+// nconf.env().argv().file({ file: "./config.json" });
 
 export class Config {
-  constructor () {}
+  constructor() {}
 
   public get(key: string): any {
-    return nconf.get(key);
+    // return nconf.get(key);
   }
 }
