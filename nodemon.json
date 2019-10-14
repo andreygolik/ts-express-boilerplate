@@ -1,5 +1,11 @@
 {
   "verbose": false,
-  "watch": ["dist/*"],
-  "ignore": ["logs/*", "test/*", "*.test.ts"]
+  "watch": [
+    "dist/"
+  ],
+  "ignore": [
+    "logs/",
+    "test/",
+    "*.test.ts"
+  ]
 }

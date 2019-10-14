@@ -1,9 +1,10 @@
 NOW
 [ ] setup postgres on dev server and make it works
+[ ] add postgres config
+[ ] add passport config
 [ ] tests
 
 LATER
-[ ] stack trace in dev env only
 [ ] configure eslint
 [ ] include eslint to build command
 
@@ -13,8 +14,10 @@ DONE
 [x] merge package.json scripts
 [x] check if logger works
 [x] dev/prod mode switch
-[x] check if errorhandler works
+[x] check if errorHandler works
 [x] add first hbs (remove ejs)
 [x] config
 [x] update winston to version 3 (if needed)
 [x] reconfigure logger
+[x] finish app.ts structure and features
+[x] stack trace in dev env only

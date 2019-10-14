@@ -1,17 +1,16 @@
-"use strict";
+import express from 'express';
 
-import * as express from "express";
-import * as path from "path";
-import { Express } from "express-serve-static-core";
+import * as indexController from './controllers/index.controller';
 
-export function indexRoutes(app: Express): void {
-  // Index Page
-  app.get("/", (req, res) => {
-    res.render("index", {
-      title: app.get("name")
-    });
-  });
+const router = express.Router();
 
-  // Static routes
-  app.use(express.static(path.join(__dirname, "public")));
-}
+/* Index Routes ***************************************************************/
+
+// Index page
+router.get('/', indexController.index);
+
+// Home page
+router.get('/home', indexController.home);
+
+/******************************************************************************/
+export default router;
