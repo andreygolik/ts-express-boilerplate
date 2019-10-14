@@ -1,59 +1,51 @@
 import * as winston from 'winston';
+import { format } from 'winston';
 
-// winston.emitErrs = true;
+const default_level = 'verbose';
+const default_console_level = 'debug';
 
-export default new winston.Logger({
+const transports = {
+  console: new winston.transports.Console({
+    level: default_console_level,
+    // Override file format (colorized, no timestamp)
+    format: format.combine(
+      format.colorize(),
+      format.printf((info) => `${info.level}: ${info.message}`),
+    ),
+  }),
+  combined: new winston.transports.File({
+    filename: './logs/combined.log',
+  }),
+  error: new winston.transports.File({
+    level: 'error',
+    filename: './logs/error.log',
+  }),
+  exceptions: new winston.transports.File({
+    filename: './logs/exceptions.log',
+  }),
+}
+
+const logger = winston.createLogger({
+  level: default_level,
+  format: format.combine(
+    format.timestamp({
+      format: 'YYYY-MM-DD HH:mm:ss',
+    }),
+    format.printf((info) => `${info.timestamp} ${info.level}: ${info.message}`)
+  ),
   transports: [
-    new winston.transports.Console({
-      level: 'debug',
-      handleExceptions: true,
-      humanReadableUnhandledException: true,
-      timestamp: false,
-      json: false,
-      colorize: 'all',
-    }),
-    new winston.transports.File({
-      name: 'debug-file',
-      level: 'debug',
-      filename: './logs/debug.log',
-      maxSize: 1000000,
-      maxFiles: 10,
-      tailable: true,
-      zippedArchive: false,
-      handleExceptions: true,
-      humanReadableUnhandledException: true,
-      timestamp: true,
-      json: false,
-      colorize: false,
-    }),
-    new winston.transports.File({
-      name: 'info-file',
-      level: 'info',
-      filename: './logs/info.log',
-      maxSize: 1000000,
-      maxFiles: 10,
-      tailable: true,
-      zippedArchive: false,
-      handleExceptions: true,
-      humanReadableUnhandledException: true,
-      timestamp: true,
-      json: false,
-      colorize: false,
-    }),
-    new winston.transports.File({
-      name: 'error-file',
-      level: 'error',
-      filename: './logs/error.log',
-      maxSize: 1000000,
-      maxFiles: 10,
-      tailable: true,
-      zippedArchive: false,
-      handleExceptions: true,
-      humanReadableUnhandledException: true,
-      timestamp: true,
-      json: false,
-      colorize: false,
-    }),
+    transports.console,
+    transports.combined,
+    transports.error,
+  ],
+  exceptionHandlers: [
+    transports.exceptions,
   ],
   exitOnError: false,
 });
+
+export default logger;
+
+export const setConsoleLogLevel = (level: string) => {
+  transports.console.level = level;
+};

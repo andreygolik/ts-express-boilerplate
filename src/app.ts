@@ -6,11 +6,13 @@ import path from 'path';
 import cors from 'cors';
 import helmet from 'helmet';
 import lusca from 'lusca';
+import morgan from 'morgan';
 import { Express } from 'express-serve-static-core';
 
 /*** Configs *****************************************************************/
 import { ENVIRONMENT, PORT } from './config/config';
 import log from './config/logger';
+import { setConsoleLogLevel } from './config/logger';
 
 /*** Express configuration ***************************************************/
 const app: Express = express();
@@ -21,13 +23,13 @@ app.set('env', ENVIRONMENT);
 log.info(`Application started in ${app.get('env')} mode`);
 
 // Morgan logger
-// app.use(
-//   require('morgan')(
-//     app.get('env') === 'development' ? 'dev' : 'short',
-//     // attach morgan to winston
-//     { stream: { write: (message: string) => logger.verbose(message.slice(0, -1)) } }
-//   )
-// );
+app.use(
+  morgan(
+    ENVIRONMENT === 'development' ? 'dev' : 'short',
+    // attach morgan to winston
+    { stream: { write: (message: string) => log.verbose(message.slice(0, -1)) } }
+  )
+);
 
 // Security middleware
 app.use(cors());
