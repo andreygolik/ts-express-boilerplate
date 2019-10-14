@@ -1,7 +1,4 @@
 NOW
-[ ] update winston to version 3 (if needed)
-[ ] reconfigure logger
-
 [ ] setup postgres on dev server and make it works
 [ ] tests
 
@@ -19,3 +16,5 @@ DONE
 [x] check if errorhandler works
 [x] add first hbs (remove ejs)
 [x] config
+[x] update winston to version 3 (if needed)
+[x] reconfigure logger

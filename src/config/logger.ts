@@ -1,8 +1,9 @@
 import * as winston from 'winston';
 import { format } from 'winston';
 
-const default_level = 'verbose';
-const default_console_level = 'debug';
+const prod = process.env.NODE_ENV === 'production';
+const default_level = prod ? 'verbose' : 'debug';
+const default_console_level = prod ? 'error' : 'debug';
 
 const transports = {
   console: new winston.transports.Console({
@@ -25,7 +26,7 @@ const transports = {
   }),
 }
 
-const logger = winston.createLogger({
+const options: winston.LoggerOptions = {
   level: default_level,
   format: format.combine(
     format.timestamp({
@@ -42,10 +43,8 @@ const logger = winston.createLogger({
     transports.exceptions,
   ],
   exitOnError: false,
-});
+};
+
+const logger = winston.createLogger(options);
 
 export default logger;
-
-export const setConsoleLogLevel = (level: string) => {
-  transports.console.level = level;
-};

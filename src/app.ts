@@ -10,9 +10,8 @@ import morgan from 'morgan';
 import { Express } from 'express-serve-static-core';
 
 /*** Configs *****************************************************************/
-import { ENVIRONMENT, PORT } from './config/config';
 import log from './config/logger';
-import { setConsoleLogLevel } from './config/logger';
+import { ENVIRONMENT, PORT } from './config/config';
 
 /*** Express configuration ***************************************************/
 const app: Express = express();
