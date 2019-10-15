@@ -21,3 +21,4 @@ DONE
 [x] reconfigure logger
 [x] finish app.ts structure and features
 [x] stack trace in dev env only
+[x] finish Dockerfiles
