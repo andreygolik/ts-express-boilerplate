@@ -5,14 +5,20 @@ const prod = process.env.NODE_ENV === 'production';
 const default_level = prod ? 'verbose' : 'debug';
 const default_console_level = prod ? 'error' : 'debug';
 
+const fileFormat = format.combine(
+  format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+  format.printf((info) => `${info.timestamp} ${info.level}: ${info.message}`)
+);
+
+const consoleFormat = format.combine(
+  format.colorize(),
+  format.printf((info) => `${info.level}: ${info.message}`),
+);
+
 const transports = {
   console: new winston.transports.Console({
     level: default_console_level,
-    // Override file format (colorized, no timestamp)
-    format: format.combine(
-      format.colorize(),
-      format.printf((info) => `${info.level}: ${info.message}`),
-    ),
+    format: consoleFormat,
   }),
   combined: new winston.transports.File({
     filename: './logs/combined.log',
@@ -21,26 +27,25 @@ const transports = {
     level: 'error',
     filename: './logs/error.log',
   }),
-  exceptions: new winston.transports.File({
-    filename: './logs/exceptions.log',
-  }),
+  // exceptions: new winston.transports.File({
+  //   level: 'error',
+  //   filename: './logs/exceptions.log',
+  // }),
 }
 
 const options: winston.LoggerOptions = {
   level: default_level,
-  format: format.combine(
-    format.timestamp({
-      format: 'YYYY-MM-DD HH:mm:ss',
-    }),
-    format.printf((info) => `${info.timestamp} ${info.level}: ${info.message}`)
-  ),
+  format: fileFormat,
   transports: [
     transports.console,
     transports.combined,
     transports.error,
   ],
   exceptionHandlers: [
-    transports.exceptions,
+    transports.console,
+    transports.combined,
+    transports.error,
+    // transports.exceptions,
   ],
   exitOnError: false,
 };
