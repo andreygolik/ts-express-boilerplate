@@ -1,11 +1,15 @@
 {
   "verbose": false,
-  "watch": [
-    "dist/"
-  ],
+  "watch": ["src"],
+  "ext": "ts",
   "ignore": [
+    "node_modules",
     "logs/",
     "test/",
-    "*.test.ts"
-  ]
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    ".git",
+    "src/public"
+  ],
+  "exec": "NODE_ENV=development ts-node src/server.ts"
 }
