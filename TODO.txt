@@ -5,6 +5,8 @@ NOW
 [ ] tests
 
 LATER
+[ ] (?) replace sass compiler by middleware
+    and get rid of complicated 'watch' script
 [ ] configure eslint
 [ ] include eslint to build command
 

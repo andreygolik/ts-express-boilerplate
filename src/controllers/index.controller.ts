@@ -1,17 +1,15 @@
 import { Request, Response } from 'express';
 
-/**
- * GET /
- * Index page.
- */
+// @desc    Index page
+// @route   GET /
+// @access  Public
 export const index = (req: Request, res: Response) => {
   res.render('index', { title: 'Index Page'});
 };
 
-/**
- * GET /home
- * Home page.
- */
+// @desc    Home page
+// @route   GET /home
+// @access  Private
 export const home = (req: Request, res: Response) => {
   res.render('home', { title: 'Home Page'});
 };

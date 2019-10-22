@@ -17,7 +17,7 @@ import { ENVIRONMENT, PORT, APP_NAME, CORS } from './config/config';
 // import passport from './config/passport';
 
 /*** Routes ******************************************************************/
-import routes from './routes';
+import indexRoutes from './routes/index.routes';
 
 /*** Express configuration ***************************************************/
 const app: Express = express();
@@ -76,7 +76,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 /*** Routes ******************************************************************/
-app.use('/', routes);
+app.use('/', indexRoutes);
 
 // Static routes
 app.use(express.static(path.join(__dirname, 'public')));
@@ -93,10 +93,14 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
 // error handler
 app.use((err: IResponseError, req: Request, res: Response, next: NextFunction) => {
+  // set locals
+  res.locals.message = err.message;
+  res.locals.error = ENVIRONMENT === "development" ? err : { status: err.status };
+
   res.status(err.status || 500)
     .render("error", {
-      message: err.message,
-      error: ENVIRONMENT === "development" ? err : { status: err.status },
+      message: res.locals.message,
+      error: res.locals.error,
     });
 });
 
