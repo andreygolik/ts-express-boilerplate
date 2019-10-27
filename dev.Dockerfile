@@ -4,7 +4,7 @@ COPY package.json package-lock.json ./
 RUN npm i -g nodemon
 RUN npm install
 COPY tsconfig.json LICENSE.txt ./
-# COPY ./utils/copyStaticAssets.ts ./utils/
+# COPY ./copyStaticAssets.ts ./
 # COPY ./src/ ./src/
 ENV NODE_ENV=development
 

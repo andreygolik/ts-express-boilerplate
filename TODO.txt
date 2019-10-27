@@ -3,6 +3,7 @@ NOW
 [ ] add postgres config
 [ ] add passport config
 [ ] tests
+[ ] improve mongo connection and add reconnect
 
 LATER
 [ ] (?) replace sass compiler by middleware

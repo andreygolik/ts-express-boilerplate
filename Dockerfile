@@ -3,7 +3,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm install
 COPY ts*.json LICENSE.txt ./
-COPY ./utils/copyStaticAssets.ts ./utils/
+COPY ./copyStaticAssets.ts ./
 COPY ./src/ ./src/
 RUN npm run build --prod
 

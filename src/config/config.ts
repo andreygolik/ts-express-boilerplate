@@ -1,13 +1,13 @@
 import dotenv from 'dotenv';
 import fs from 'fs';
 
-import log from './logger';
+import logger from './logger';
 
 if (fs.existsSync('.env')) {
-  log.info('Using .env file to supply config environment variables');
+  logger.info('Using .env file to supply config environment variables');
   dotenv.config({ path: '.env' });
 } else if (fs.existsSync('.env.example')) {
-  log.warn('Using .env.example file to supply config environment variables');
+  logger.warn('Using .env.example file to supply config environment variables');
   dotenv.config({ path: '.env.example' });
 }
 
@@ -20,8 +20,14 @@ export const APP_NAME = process.env.NODE_APP_NAME || 'Server';
 
 export const CORS = process.env.NODE_ALLOW_CORS === 'true';
 
-export const { POSTGRES_URI } = process.env;
-if (!POSTGRES_URI) {
-  log.error('No postgres connection string. Set POSTGRES_URI environment variable.');
+// export const { POSTGRES_URI } = process.env;
+// if (!POSTGRES_URI) {
+//   logger.error('No postgres connection string. Set POSTGRES_URI environment variable.');
+//   process.exit(1);
+// }
+
+export const { MONGO_URI } = process.env;
+if (!MONGO_URI) {
+  logger.error('No mongo connection string. Set MONGO_URI environment variable.');
   process.exit(1);
 }

@@ -2,17 +2,8 @@ import { createServer, Server } from 'http';
 
 import app from './app';
 
-const server: Server = createServer(app);
-const port = app.get('port') || 3000;
-
-server.on('listening', onListening);
-server.on('error', onError);
-
-// Start Express Server
-server.listen(port, '0.0.0.0');
-
 // Event listener for HTTP server "listening" event.
-function onListening() {
+const onListening = () => {
   const addr = server.address();
   const bind = typeof addr === 'string'
     ? 'pipe ' + addr
@@ -22,7 +13,7 @@ function onListening() {
 }
 
 // Event listener for HTTP server "error" event.
-function onError(error: NodeJS.ErrnoException) {
+const onError = (error: NodeJS.ErrnoException) => {
   if (error.syscall !== 'listen') {
     throw error;
   }
@@ -45,5 +36,14 @@ function onError(error: NodeJS.ErrnoException) {
       throw error;
   }
 }
+
+const server: Server = createServer(app);
+const port = app.get('port') || 3000;
+
+server.on('listening', onListening);
+server.on('error', onError);
+
+// *** Start Express Server *** //
+server.listen(port, '0.0.0.0');
 
 export default server;

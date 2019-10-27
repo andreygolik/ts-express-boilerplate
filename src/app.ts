@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Express, Request, Response, NextFunction } from 'express';
 import favicon from 'serve-favicon';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
@@ -8,16 +8,24 @@ import helmet from 'helmet';
 import lusca from 'lusca';
 import morgan from 'morgan';
 import compression from 'compression';
-import { Express, Request, Response, NextFunction } from 'express-serve-static-core';
 
 /*** Config ******************************************************************/
-import log from './config/logger';
+import logger from './config/logger';
 import { ENVIRONMENT, PORT, APP_NAME, CORS } from './config/config';
+import connectDB from './config/mongo';
 // import postgres from './config/postgres';
 // import passport from './config/passport';
 
 /*** Routes ******************************************************************/
 import indexRoutes from './routes/index.routes';
+import playgroundRoutes from './routes/playground.routes';
+
+/*** Other Imports ***********************************************************/
+import ErrorResponse from './shared/ErrorResponse';
+import errorHandler from './middlewares/errorHandler';
+
+/*** Database Initialization *************************************************/
+connectDB();
 
 /*** Express configuration ***************************************************/
 const app: Express = express();
@@ -26,21 +34,21 @@ app.set('env', ENVIRONMENT);
 app.set('port', PORT);
 app.set('name', APP_NAME);
 
-log.info(`Application started in ${ENVIRONMENT} mode`);
+logger.info(`Application started in ${ENVIRONMENT} mode`);
 
 // Morgan logger
 app.use(
   morgan(
     ENVIRONMENT === 'development' ? 'dev' : 'short',
     // attach morgan to winston
-    { stream: { write: (message: string) => log.verbose(message.slice(0, -1)) } }
+    { stream: { write: (message: string) => logger.verbose(message.slice(0, -1)) } }
   )
 );
 
 // Security middleware
 if (CORS === true) {
   app.use(cors());
-  log.info('Cross-Origin Resource Sharing (CORS) enabled');
+  logger.info('Cross-Origin Resource Sharing (CORS) enabled');
 }
 app.use(helmet());
 app.disable('x-powered-by');
@@ -78,30 +86,23 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 /*** Routes ******************************************************************/
 app.use('/', indexRoutes);
 
+// if (ENVIRONMENT === "development") {
+  app.use('/playground', playgroundRoutes);
+// }
+
 // Static routes
 app.use(express.static(path.join(__dirname, 'public')));
 
 /*** Error Handler ***********************************************************/
-interface IResponseError extends Error { status?: number; }
-
 // 404
-app.use((req: Request, res: Response, next: NextFunction) => {
-  const err: IResponseError = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
+app.use((req, res, next: NextFunction) => next(new ErrorResponse('Not Found', 404)));
 
-// error handler
-app.use((err: IResponseError, req: Request, res: Response, next: NextFunction) => {
-  // set locals
-  res.locals.message = err.message;
-  res.locals.error = ENVIRONMENT === "development" ? err : { status: err.status };
+// Custom error handler
+app.use(errorHandler);
 
-  res.status(err.status || 500)
-    .render("error", {
-      message: res.locals.message,
-      error: res.locals.error,
-    });
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (err, promise) => {
+  logger.error(`unhandledRejection: ${err}`);
 });
 
 /*****************************************************************************/
