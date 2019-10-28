@@ -4,6 +4,33 @@ import mongoose from 'mongoose';
 import asyncHandler from '../middlewares/asyncHandler';
 import ErrorResponse from '../shared/ErrorResponse';
 import { IUser, UserModel } from '../models/User';
+import { JWT_COOKIE_EXPIRE, ENVIRONMENT } from '../config/config';
+
+// Get token from model, create cookie and send response
+const sendTokenResponse = (user: IUser, statusCode: number, res: Response) => {
+  // Create token
+  const token = user.getSignedJwtToken();
+
+  const expiresMs = +JWT_COOKIE_EXPIRE ? +JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000 : 0;
+  const options = {
+    expires: new Date(Date.now() + expiresMs),
+    httpOnly: true,
+    secure: true
+  }
+
+  // Allow http in development
+  if (ENVIRONMENT === 'development') {
+    options.secure = false;
+  }
+
+  res
+    .status(statusCode)
+    .cookie('token', token, options)
+    .json({
+      success: true,
+      token,
+    });
+}
 
 // @desc    Register user
 // @route   POST /api/v1/register
@@ -19,13 +46,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
     role,
   });
 
-  // Create token
-  const token = user.getSignedJwtToken();
-
-  res.status(200).json({
-    success: true,
-    token,
-  });
+  sendTokenResponse(user, 200, res);
 });
 
 // @desc    Login user
@@ -51,11 +72,5 @@ export const login = asyncHandler(async (req: Request, res: Response, next: Next
     return next(new ErrorResponse('Invalid credentials', 401));
   }
 
-  // Create token
-  const token = user.getSignedJwtToken();
-
-  res.status(200).json({
-    success: true,
-    token,
-  });
+  sendTokenResponse(user, 200, res);
 });
