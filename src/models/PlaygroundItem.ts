@@ -1,6 +1,18 @@
-import mongoose from 'mongoose';
+import { Document, Schema, Model, model } from 'mongoose';
 
-const playgroundItem = new mongoose.Schema({
+export interface IPlaygroundItemDocument extends Document {
+  name: string;
+  email?: string;
+  group: [string];
+  rate?: number;
+  text: string;
+}
+
+export interface IPlaygroundItem extends IPlaygroundItemDocument {}
+
+export interface IPlaygroundItemModel extends Model<IPlaygroundItem> {}
+
+export const PlaygroundItem = new Schema({
   name: {
     type: String,
     required: [true, 'Please add a name'],
@@ -42,4 +54,5 @@ const playgroundItem = new mongoose.Schema({
   },
 });
 
-export default mongoose.model('PlaygroundItem', playgroundItem);
+export const PlaygroundItemModel: IPlaygroundItemModel =
+  model<IPlaygroundItemDocument, IPlaygroundItemModel>('PlaygroundItem', PlaygroundItem);

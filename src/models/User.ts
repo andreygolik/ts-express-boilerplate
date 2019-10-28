@@ -75,4 +75,4 @@ UserSchema.methods.matchPassword = async function(enteredPassword: string): Prom
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-export const User: IUserModel = model<IUserDocument, IUserModel>('User', UserSchema);
+export const UserModel: IUserModel = model<IUserDocument, IUserModel>('User', UserSchema);

@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 
 import * as playgroundController from '../controllers/playground.controller';
 import advancedResults from '../middlewares/advancedResults';
-import PlaygroundItem from '../models/PlaygroundItem';
+import { PlaygroundItemModel } from '../models/PlaygroundItem';
 
 const router = express.Router();
 
@@ -15,7 +15,7 @@ router.get('/throw/:status', playgroundController.throwError);
 
 // Test Items
 router.route('/items')
-  .get(advancedResults(PlaygroundItem), playgroundController.getItems)
+  .get(advancedResults(PlaygroundItemModel), playgroundController.getItems)
   .post(playgroundController.createItem);
 router.route('/items/:id')
   .get(playgroundController.getItem)

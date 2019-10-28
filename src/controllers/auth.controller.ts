@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 
 import asyncHandler from '../middlewares/asyncHandler';
 import ErrorResponse from '../shared/ErrorResponse';
-import { IUser, User } from '../models/User';
+import { IUser, UserModel } from '../models/User';
 
 // @desc    Register user
 // @route   POST /api/v1/register
@@ -12,7 +12,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   const { name, email, password, role } = req.body;
 
   // Create user
-  const user: IUser = await User.create({
+  const user: IUser = await UserModel.create({
     name,
     email,
     password,
@@ -40,7 +40,7 @@ export const login = asyncHandler(async (req: Request, res: Response, next: Next
   }
 
   // Check for user
-  const user: IUser = await User.findOne({ email }).select('+password');
+  const user: IUser = await UserModel.findOne({ email }).select('+password');
   if (!user) {
     return next(new ErrorResponse('Invalid credentials', 401));
   }

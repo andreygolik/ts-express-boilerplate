@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 
 import asyncHandler from '../middlewares/asyncHandler';
 import ErrorResponse from '../shared/ErrorResponse';
-import PlaygroundItem from '../models/PlaygroundItem';
+import { PlaygroundItemModel } from '../models/PlaygroundItem';
 
 // @desc    Throw Test Error
 // @route   GET /playground/throw
@@ -24,7 +24,7 @@ export const throwError = (req: Request, res: Response, next: NextFunction) => {
 // @route   GET /playground/items
 // @access  Public
 export const getItems = asyncHandler(async (req: Request, res: any, next: NextFunction) => {
-  const items = await PlaygroundItem.find();
+  const items = await PlaygroundItemModel.find();
 
   res.status(200).json(res.advancedResults);
 });
@@ -33,7 +33,7 @@ export const getItems = asyncHandler(async (req: Request, res: any, next: NextFu
 // @route   GET /playground/items/:id
 // @access  Public
 export const getItem = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-  const item = await PlaygroundItem.findById(req.params.id);
+  const item = await PlaygroundItemModel.findById(req.params.id);
 
   if (!item) {
     return next(new ErrorResponse(`Item not found with ID of ${req.params.id}`, 404));
@@ -49,7 +49,7 @@ export const getItem = asyncHandler(async (req: Request, res: Response, next: Ne
 // @route   POST /playground/items
 // @access  Public
 export const createItem = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-  const item = await PlaygroundItem.create(req.body);
+  const item = await PlaygroundItemModel.create(req.body);
 
   res.status(201).json({
     success: true,
@@ -61,7 +61,7 @@ export const createItem = asyncHandler(async (req: Request, res: Response, next:
 // @route   PATCH /playground/items/:id
 // @access  Public
 export const updateItem = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-  const item = await PlaygroundItem.findByIdAndUpdate(req.params.id, req.body, {
+  const item = await PlaygroundItemModel.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
   });
@@ -80,7 +80,7 @@ export const updateItem = asyncHandler(async (req: Request, res: Response, next:
 // @route   DELETE /playground/items/:id
 // @access  Public
 export const deleteItem = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-  const item = await PlaygroundItem.findByIdAndDelete(req.params.id);
+  const item = await PlaygroundItemModel.findByIdAndDelete(req.params.id);
 
   if (!item) {
     return next(new ErrorResponse(`Item not found with ID of ${req.params.id}`, 404));
