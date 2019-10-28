@@ -16,16 +16,11 @@
     "build-sass": "node-sass src/public/stylesheets/main.scss dist/public/stylesheets/main.css",
     "build-ts": "tsc",
     "copy-static-assets": "ts-node ./copyStaticAssets.ts",
-    "watch": "npm run build && npm run watch-all",
-    "watch-all": "concurrently -k -p \"[{name}]\" -n \"Sass,TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch-sass\" \"npm run watch-ts\" \"npm run watch-node\"",
-    "watch-sass": "node-sass -w src/public/stylesheets/main.scss dist/public/stylesheets/main.css",
-    "watch-ts": "tsc -w",
-    "watch-node": "nodemon dist/server.js",
+    "watch": "nodemon",
+    "debug": "npm run watch-debug",
+    "watch-debug": "nodemon --inspect",
     "test": "jest --forceExit --coverage --verbose",
-    "watch-test": "npm run test -- --watchAll",
-    "debug": "npm run build && npm run watch-debug",
-    "watch-debug": "concurrently -k -p \"[{name}]\" -n \"Sass,TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch-sass\" \"npm run watch-ts\" \"npm run serve-debug\"",
-    "serve-debug": "nodemon --inspect dist/server.js"
+    "watch-test": "npm run test -- --watchAll"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
@@ -40,6 +35,7 @@
     "lusca": "^1.6.1",
     "mongoose": "^5.7.6",
     "morgan": "^1.9.1",
+    "node-sass-middleware": "^0.11.0",
     "serve-favicon": "^2.5.0",
     "winston": "^3.2.1"
   },
@@ -56,6 +52,7 @@
     "@types/mongoose": "^5.5.22",
     "@types/morgan": "^1.7.37",
     "@types/node": "^9.6.52",
+    "@types/node-sass-middleware": "0.0.31",
     "@types/serve-favicon": "^2.2.31",
     "@types/shelljs": "^0.8.5",
     "concurrently": "^3.6.1",

@@ -8,6 +8,7 @@ import helmet from 'helmet';
 import lusca from 'lusca';
 import morgan from 'morgan';
 import compression from 'compression';
+import sassMiddleware from 'node-sass-middleware';
 
 /*** Config ******************************************************************/
 import logger from './config/logger';
@@ -46,13 +47,13 @@ app.use(
 );
 
 // Security middleware
+app.disable('x-powered-by');
 if (CORS === true) {
   app.use(cors());
   logger.info('Cross-Origin Resource Sharing (CORS) enabled');
 }
 app.use(helmet());
-app.disable('x-powered-by');
-// app.use(lusca.xframe('SAMEORIGIN'));
+app.use(lusca.xframe('SAMEORIGIN'));
 //app.use(lusca.xframe('ALLOW-FROM ' + config.cookieDomain));
 app.use(lusca.xssProtection(true));
 
@@ -66,13 +67,15 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+// Passport
 // app.use(passport.initialize());
 // app.use(passport.session());
-interface IRequest extends Request { user: any; }
-app.use((req: IRequest, res: Response, next: NextFunction) => {
-  res.locals.user = req.user;
-  next();
-});
+//
+// interface IRequest extends Request { user: any; }
+// app.use((req: IRequest, res: Response, next: NextFunction) => {
+//   res.locals.user = req.user;
+//   next();
+// });
 
 // Headers
 app.use((req: Request, res: Response, next: NextFunction) => {
@@ -92,6 +95,18 @@ app.use('/', indexRoutes);
 
 // Static routes
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Scss middleware
+// compiles SCSS on the fly and respond with CSS
+// only if CSS is missing in public folder, only in development
+if (ENVIRONMENT === 'development') {
+  app.use(sassMiddleware({
+    src: path.join(__dirname, 'public'),
+    response: true,
+    outputStyle: 'expanded',
+    debug: false,
+  }));
+}
 
 /*** Error Handler ***********************************************************/
 // 404
