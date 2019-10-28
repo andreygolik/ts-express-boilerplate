@@ -19,6 +19,7 @@ import connectDB from './config/mongo';
 
 /*** Routes ******************************************************************/
 import indexRoutes from './routes/index.routes';
+import authRoutes from './routes/auth.routes';
 import playgroundRoutes from './routes/playground.routes';
 
 /*** Other Imports ***********************************************************/
@@ -88,9 +89,10 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
 /*** Routes ******************************************************************/
 app.use('/', indexRoutes);
+app.use('/api/v1/auth', authRoutes);
 
 // if (ENVIRONMENT === "development") {
-  app.use('/playground', playgroundRoutes);
+  app.use('/api/v1/playground', playgroundRoutes);
 // }
 
 // Static routes

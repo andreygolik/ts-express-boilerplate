@@ -31,3 +31,9 @@ if (!MONGO_URI) {
   logger.error('No mongo connection string. Set MONGO_URI environment variable.');
   process.exit(1);
 }
+
+export const { JWT_SECRET, JWT_EXPIRE } = process.env;
+if (! JWT_SECRET || JWT_SECRET.length < 16) {
+  logger.error('Bad JWT_SECRET environment variable.');
+  process.exit(2);
+}

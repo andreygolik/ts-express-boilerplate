@@ -3,6 +3,7 @@
         "lusca",
         "maxlength",
         "middlewares",
+        "minlength",
         "stylesheets"
     ]
 }

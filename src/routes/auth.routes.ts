@@ -1,17 +1,15 @@
 import express from 'express';
 import { Request, Response, NextFunction } from 'express';
 
-import { index, home } from '../controllers/index.controller';
+import { register } from '../controllers/auth.controller';
 
 const router = express.Router();
 
-/* Index Routes ***************************************************************/
+/* Auth Routes ****************************************************************/
 
-// Index page
-router.get('/', index);
+// Register user
+router.post('/register', register);
 
-// Home page
-router.get('/home', home);
 
 /******************************************************************************/
 export default router;
