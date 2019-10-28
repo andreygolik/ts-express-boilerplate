@@ -1,10 +1,24 @@
-import mongoose from 'mongoose';
+import { Document, Schema, Model, model } from 'mongoose';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
 import { JWT_SECRET, JWT_EXPIRE } from '../config/config';
 
-const UserSchema = new mongoose.Schema({
+export interface IUserDocument extends Document {
+  email: string;
+  name: string;
+  role: string;
+  password?: string;
+}
+
+export interface IUser extends IUserDocument {
+  matchPassword(enteredPassword: string): Promise<boolean>;
+  getSignedJwtToken(): string;
+}
+
+export interface IUserModel extends Model<IUser> {}
+
+export const UserSchema = new Schema({
   name: {
     type: String,
     required: [true, 'Please add a name'],
@@ -46,13 +60,19 @@ const UserSchema = new mongoose.Schema({
 UserSchema.pre('save', async function(this: any, next) {
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
+  next();
 });
 
 // Sign JWT and return
-UserSchema.methods.getSignedJwtToken = function() {
+UserSchema.methods.getSignedJwtToken = function(): string {
   return jwt.sign({ id: this._id }, JWT_SECRET, {
     expiresIn: JWT_EXPIRE,
   });
 };
 
-export default mongoose.model('User', UserSchema);
+// Match user entered password to hashed password in database
+UserSchema.methods.matchPassword = async function(enteredPassword: string): Promise<boolean> {
+  return await bcrypt.compare(enteredPassword, this.password);
+};
+
+export const User: IUserModel = model<IUserDocument, IUserModel>('User', UserSchema);
