@@ -23,14 +23,10 @@ export const throwError = (req: Request, res: Response, next: NextFunction) => {
 // @desc    Get all items
 // @route   GET /playground/items
 // @access  Public
-export const getItems = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+export const getItems = asyncHandler(async (req: Request, res: any, next: NextFunction) => {
   const items = await PlaygroundItem.find();
 
-  res.status(200).json({
-    success: true,
-    count: items.length,
-    data: items,
-  });
+  res.status(200).json(res.advancedResults);
 });
 
 // @desc    Get single item
