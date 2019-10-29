@@ -3,8 +3,9 @@ import mongoose from 'mongoose';
 
 import asyncHandler from '../middlewares/asyncHandler';
 import ErrorResponse from '../shared/ErrorResponse';
-import { IUser, UserModel } from '../models/User';
+import { IUser, UserModel, UserSchema } from '../models/User';
 import { JWT_COOKIE_EXPIRE, ENVIRONMENT } from '../config/config';
+import IRequest from '../interfaces/request';
 
 // Get token from model, create cookie and send response
 const sendTokenResponse = (user: IUser, statusCode: number, res: Response) => {
@@ -33,7 +34,7 @@ const sendTokenResponse = (user: IUser, statusCode: number, res: Response) => {
 }
 
 // @desc    Register user
-// @route   POST /api/v1/register
+// @route   POST /api/v1/auth/register
 // @access  Public
 export const register = asyncHandler(async (req: Request, res: Response) => {
   const { name, email, password, role } = req.body;
@@ -50,7 +51,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
 });
 
 // @desc    Login user
-// @route   POST /api/v1/login
+// @route   POST /api/v1/auth/login
 // @access  Public
 export const login = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   const { email, password } = req.body;
@@ -73,4 +74,16 @@ export const login = asyncHandler(async (req: Request, res: Response, next: Next
   }
 
   sendTokenResponse(user, 200, res);
+});
+
+// @desc    Get current logged user
+// @route   POST /api/v1/auth/me
+// @access  Private
+export const getMe = asyncHandler(async (req: IRequest, res: Response, next: NextFunction) => {
+  const user = await UserModel.findById(req.user.id);
+
+  res.status(200).json({
+    success: true,
+    data: user,
+  });
 });

@@ -1,7 +1,7 @@
 import express from 'express';
-import { Request, Response, NextFunction } from 'express';
 
 import { index, home } from '../controllers/index.controller';
+import { protect } from '../middlewares/auth';
 
 const router = express.Router();
 
@@ -11,7 +11,7 @@ const router = express.Router();
 router.get('/', index);
 
 // Home page
-router.get('/home', home);
+router.get('/home', protect, home);
 
 /******************************************************************************/
 export default router;

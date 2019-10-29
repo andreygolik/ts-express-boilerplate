@@ -38,7 +38,8 @@ export const UserSchema = new Schema({
     type: String,
     enum: [
       'user',
-      'owner'
+      'owner',
+      'admin',
     ],
     default: 'user',
   },

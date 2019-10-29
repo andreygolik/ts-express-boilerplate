@@ -6,7 +6,7 @@ import logger from './logger';
 const options: mongoose.ConnectionOptions = {
   useNewUrlParser: true,
   useCreateIndex: true,
-  useFindAndModify: true,
+  useFindAndModify: false,
   useUnifiedTopology: true,
 }
 
