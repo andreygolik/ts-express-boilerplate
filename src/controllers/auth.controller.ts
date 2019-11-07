@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
-import mongoose from 'mongoose';
+import crypto from 'crypto';
 
 import asyncHandler from '../middlewares/asyncHandler';
 import ErrorResponse from '../shared/ErrorResponse';
-import { IUser, UserModel, UserSchema, IUserDocument, IUserModel } from '../models/User';
+import { IUser, UserModel } from '../models/User';
 import { JWT_COOKIE_EXPIRE, ENVIRONMENT } from '../config/config';
 import IRequest from '../interfaces/request';
 import { sendEmail, IEmailOptions } from '../utils/sendEmail';
@@ -85,7 +85,7 @@ export const forgotPassword = asyncHandler(async (req: IRequest, res: Response, 
     email: user.email,
     subject: 'Password Reset Link',
     message: `Your password reset link is: ${resetLink}`,
-  }
+  };
 
   try {
     await sendEmail(emailOptions);
@@ -102,6 +102,39 @@ export const forgotPassword = asyncHandler(async (req: IRequest, res: Response, 
   }
 });
 
+// @desc    Reset password with token
+// @route   GET /api/v1/auth/resetpassword/:token
+// @access  Public
+export const resetPassword = asyncHandler(async (req: IRequest, res: Response, next: NextFunction) => {
+  if (!req.params.token || req.params.token.length < 32) {
+    return next(new ErrorResponse('Invalid or expired token', 400));
+  }
+
+  const resetPasswordToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
+
+  const user: IUser = await UserModel.findOne({
+    resetPasswordToken,
+    resetPasswordExpire: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return next(new ErrorResponse('Invalid or expired token', 400));
+  }
+
+  // Set new password
+  const newPassword = crypto.randomBytes(12).toString('base64');
+  user.password = newPassword;
+  user.clearResetPasswordToken();
+  await user.save();
+
+  res.status(200).json({
+    success: true,
+    data: {
+      newPassword,
+    },
+  });
+});
+
 // Get token from model, create cookie and send response
 const sendTokenResponse = (user: IUser, statusCode: number, res: Response) => {
   // Create token
@@ -111,8 +144,8 @@ const sendTokenResponse = (user: IUser, statusCode: number, res: Response) => {
   const options = {
     expires: new Date(Date.now() + expiresMs),
     httpOnly: true,
-    secure: true
-  }
+    secure: true,
+  };
 
   // Allow http in development
   if (ENVIRONMENT === 'development') {
@@ -126,4 +159,4 @@ const sendTokenResponse = (user: IUser, statusCode: number, res: Response) => {
       success: true,
       token,
     });
-}
+};

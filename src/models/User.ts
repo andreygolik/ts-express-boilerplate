@@ -10,6 +10,8 @@ export interface IUserDocument extends Document {
   name: string;
   role: string;
   password?: string;
+  resetPasswordToken?: string;
+  resetPasswordExpire?: Date;
 }
 
 export interface IUser extends IUserDocument {
@@ -76,10 +78,12 @@ UserSchema.methods.matchPassword = async function(enteredPassword: string): Prom
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
+export const RESET_TOKEN_LENGTH = 32;
+
 // Generate and hash password reset token
 UserSchema.methods.getResetPasswordToken = async function(): Promise<string> {
   // Generate token
-  const resetToken = crypto.randomBytes(20).toString('hex');
+  const resetToken = crypto.randomBytes(RESET_TOKEN_LENGTH).toString('hex');
 
   // Hash token and save it to resetPasswordToken field
   this.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');

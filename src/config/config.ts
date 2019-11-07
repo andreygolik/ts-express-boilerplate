@@ -40,3 +40,4 @@ if (!JWT_SECRET || JWT_SECRET.length < 16) {
 
 // Email configuration
 export const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD, FROM_EMAIL, FROM_NAME } = process.env;
+export const SMTP_SECURE = process.env.SMTP_SECURE !== 'false';

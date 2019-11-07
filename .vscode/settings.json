@@ -5,6 +5,7 @@
         "maxlength",
         "middlewares",
         "minlength",
+        "resetpassword",
         "smtp",
         "stylesheets"
     ]
