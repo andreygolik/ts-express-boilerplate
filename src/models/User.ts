@@ -1,5 +1,6 @@
 import { Document, Schema, Model, model } from 'mongoose';
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 
 import { JWT_SECRET, JWT_EXPIRE } from '../config/config';
@@ -14,6 +15,8 @@ export interface IUserDocument extends Document {
 export interface IUser extends IUserDocument {
   matchPassword(enteredPassword: string): Promise<boolean>;
   getSignedJwtToken(): string;
+  getResetPasswordToken(): Promise<string>;
+  clearResetPasswordToken(): boolean;
 }
 
 export interface IUserModel extends Model<IUser> {}
@@ -29,18 +32,11 @@ export const UserSchema = new Schema({
     type: String,
     required: [true, 'Please add an email'],
     unique: true,
-    match: [
-      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-      'Please add a valid email'
-    ],
+    match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please add a valid email'],
   },
   role: {
     type: String,
-    enum: [
-      'user',
-      'owner',
-      'admin',
-    ],
+    enum: ['user', 'owner', 'admin'],
     default: 'user',
   },
   password: {
@@ -58,7 +54,11 @@ export const UserSchema = new Schema({
 });
 
 // Encrypt password using bcrypt
-UserSchema.pre('save', async function(this: any, next) {
+UserSchema.pre('save', async function(this: IUser, next) {
+  if (!this.isModified('password')) {
+    next();
+  };
+
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
   next();
@@ -75,5 +75,27 @@ UserSchema.methods.getSignedJwtToken = function(): string {
 UserSchema.methods.matchPassword = async function(enteredPassword: string): Promise<boolean> {
   return await bcrypt.compare(enteredPassword, this.password);
 };
+
+// Generate and hash password reset token
+UserSchema.methods.getResetPasswordToken = async function(): Promise<string> {
+  // Generate token
+  const resetToken = crypto.randomBytes(20).toString('hex');
+
+  // Hash token and save it to resetPasswordToken field
+  this.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+
+  // Set expiration
+  this.resetPasswordExpire = Date.now() + 15 * 60 * 1000;  // 15min
+
+  return resetToken;
+};
+
+// Remove password reset token
+UserSchema.methods.clearResetPasswordToken = function(): boolean {
+  this.resetPasswordToken = null;
+  this.resetPasswordExpire = null;
+
+  return true;
+}
 
 export const UserModel: IUserModel = model<IUserDocument, IUserModel>('User', UserSchema);
