@@ -13,6 +13,9 @@ const router = express.Router();
 router.get('/throw', playgroundController.throwError);
 router.get('/throw/:status', playgroundController.throwError);
 
+// Echo
+router.all('/echo', playgroundController.echo);
+
 // Test Items
 router.route('/items')
   .get(advancedResults(PlaygroundItemModel), playgroundController.getItems)

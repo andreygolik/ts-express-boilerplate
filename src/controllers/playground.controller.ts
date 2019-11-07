@@ -20,6 +20,25 @@ export const throwError = (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+// @desc    Echo Request
+// @route   ANY /playground/echo
+// @access  Public
+export const echo = (req: Request, res: Response, next: NextFunction) => {
+  const payload = {
+    method: req.method,
+    headers: req.headers,
+    params: req.params,
+    body: req.body,
+    cookies: req.cookies,
+    path: req.path,
+    query: req.query,
+    hostname: req.hostname,
+    ip: req.ip,
+  };
+
+  res.status(200).json(payload);
+};
+
 // @desc    Get all items
 // @route   GET /playground/items
 // @access  Public
