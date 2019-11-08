@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
 
 import ErrorResponse from '../shared/ErrorResponse';
+import IAdvancedResultsResponse from '../interfaces/advancedResultsResponse';
 
 /*
 ATTENTION
@@ -11,7 +12,7 @@ Possibly contains bugs and vulnerabilities.
 */
 
 const advancedResults = (model: mongoose.Model<any, any>, populate?: string | false) =>
-  async (req: Request, res: any, next: NextFunction) => {
+  async (req: Request, res: IAdvancedResultsResponse, next: NextFunction) => {
     let query;
 
     // Copy req.query

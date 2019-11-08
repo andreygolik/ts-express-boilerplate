@@ -96,8 +96,8 @@ UserSchema.methods.getResetPasswordToken = async function(): Promise<string> {
 
 // Remove password reset token
 UserSchema.methods.clearResetPasswordToken = function(): boolean {
-  this.resetPasswordToken = null;
-  this.resetPasswordExpire = null;
+  this.resetPasswordToken = undefined;
+  this.resetPasswordExpire = undefined;
 
   return true;
 }
