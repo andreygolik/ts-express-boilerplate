@@ -77,7 +77,7 @@ app.use(mongoSanitize());
 // Rate limiting
 app.use(rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 10, // limit each IP to 100 requests per windowMs
+  max: 100, // limit each IP to 100 requests per windowMs
 })); // apply to all requests
 // Enable CORS (for public API)
 if (CORS === true) {
