@@ -3,10 +3,10 @@ import crypto from 'crypto';
 
 import asyncHandler from '../middlewares/asyncHandler';
 import ErrorResponse from '../shared/ErrorResponse';
-import { IUser, UserModel } from '../models/User';
-import { JWT_COOKIE_EXPIRE, ENVIRONMENT } from '../config/config';
 import IRequest from '../interfaces/request';
+import { IUser, UserModel } from '../models/User';
 import { sendEmail, IEmailOptions } from '../utils/sendEmail';
+import { JWT_COOKIE_EXPIRE, ENVIRONMENT } from '../config/config';
 
 // @desc    Register user
 // @route   POST /api/v1/auth/register
@@ -54,13 +54,55 @@ export const login = asyncHandler(async (req: Request, res: Response, next: Next
 // @desc    Get current logged user
 // @route   POST /api/v1/auth/me
 // @access  Private
-export const getMe = asyncHandler(async (req: IRequest, res: Response, next: NextFunction) => {
+export const getMe = asyncHandler(async (req: IRequest, res: Response) => {
   const user = await UserModel.findById(req.user.id);
 
   res.status(200).json({
     success: true,
     data: user,
   });
+});
+
+// @desc    Update user details
+// @route   PUT /api/v1/auth/updatedetails
+// @access  Private
+export const updateDetails = asyncHandler(async (req: IRequest, res: Response) => {
+  const fieldsToUpdate = {
+    name: req.body.name,
+    email: req.body.email,
+  };
+
+  const user = await UserModel.findByIdAndUpdate(req.user.id, fieldsToUpdate, {
+    new: true,
+    runValidators: true,
+  });
+
+  res.status(200).json({
+    success: true,
+    data: user,
+  });
+});
+
+// @desc    Update password
+// @route   PUT /api/v1/auth/updatepassword
+// @access  Private
+export const updatePassword = asyncHandler(async (req: IRequest, res: Response, next: NextFunction) => {
+  const { currentPassword, newPassword } = req.body;
+  if (!currentPassword && !newPassword) {
+    return next(new ErrorResponse('Please provide currentPassword and newPassword', 400));
+  }
+
+  const user = await UserModel.findById(req.user.id).select('+password');
+
+  // Check current password
+  if (!(await user.matchPassword(currentPassword))) {
+    return next(new ErrorResponse('Password is incorrect', 401));
+  }
+
+  user.password = newPassword;
+  await user.save();
+
+  sendTokenResponse(user, 200, res);
 });
 
 // @desc    Forgot password
@@ -70,7 +112,7 @@ export const forgotPassword = asyncHandler(async (req: IRequest, res: Response, 
   const user = await UserModel.findOne({ email: req.body.email });
 
   if (!user) {
-    return next(new ErrorResponse('Can\'t find that email, sorry.', 404));
+    return next(new ErrorResponse("Can't find that email, sorry.", 404));
   }
 
   // Get reset token
@@ -84,7 +126,7 @@ export const forgotPassword = asyncHandler(async (req: IRequest, res: Response, 
   const emailOptions: IEmailOptions = {
     email: user.email,
     subject: 'Password Reset Link',
-    message: `Your password reset link is: ${resetLink}`,
+    message: `Please make a PUT request with password to: ${resetLink}`,
   };
 
   try {
@@ -106,10 +148,12 @@ export const forgotPassword = asyncHandler(async (req: IRequest, res: Response, 
 // @route   GET /api/v1/auth/resetpassword/:token
 // @access  Public
 export const resetPassword = asyncHandler(async (req: IRequest, res: Response, next: NextFunction) => {
+  // Ignore short tokens (for extra security)
   if (!req.params.token || req.params.token.length < 32) {
     return next(new ErrorResponse('Invalid or expired token', 400));
   }
 
+  // Hash received token before comparing
   const resetPasswordToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
 
   const user: IUser = await UserModel.findOne({
@@ -121,16 +165,18 @@ export const resetPassword = asyncHandler(async (req: IRequest, res: Response, n
     return next(new ErrorResponse('Invalid or expired token', 400));
   }
 
-  // Set new password
-  const newPassword = crypto.randomBytes(12).toString('base64');
-  user.password = newPassword;
+  if (!req.body.password) {
+    return next(new ErrorResponse('Please provide password', 400));
+  }
+
+  user.password = req.body.password;
   user.clearResetPasswordToken();
   await user.save();
 
   res.status(200).json({
     success: true,
     data: {
-      newPassword,
+      message: 'password updated',
     },
   });
 });
@@ -152,11 +198,8 @@ const sendTokenResponse = (user: IUser, statusCode: number, res: Response) => {
     options.secure = false;
   }
 
-  res
-    .status(statusCode)
-    .cookie('token', token, options)
-    .json({
-      success: true,
-      token,
-    });
+  res.status(statusCode).cookie('token', token, options).json({
+    success: true,
+    token,
+  });
 };
