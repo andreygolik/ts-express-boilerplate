@@ -6,7 +6,9 @@ import path from 'path';
 import cors from 'cors';
 import helmet from 'helmet';
 import lusca from 'lusca';
+import hpp from 'hpp';
 import mongoSanitize from 'express-mongo-sanitize';
+import rateLimit from 'express-rate-limit';
 import morgan from 'morgan';
 import compression from 'compression';
 import sassMiddleware from 'node-sass-middleware';
@@ -60,13 +62,24 @@ if (JWT_COOKIE) {
   app.use(cookieParser());
 }
 
-// Security middleware
+// Security middlewares
 app.disable('x-powered-by');
+// Set security headers
 app.use(helmet());
 app.use(lusca.xframe('SAMEORIGIN'));
 app.use(lusca.xssProtection(true));
+// Prevent XSS attacks
 app.use(xssClean());
+// Prevent http param pollution
+app.use(hpp());
+// Sanitize data
 app.use(mongoSanitize());
+// Rate limiting
+app.use(rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // limit each IP to 100 requests per windowMs
+})); // apply to all requests
+// Enable CORS (for public API)
 if (CORS === true) {
   app.use(cors());
   logger.info('Cross-Origin Resource Sharing (CORS) enabled');
