@@ -6,16 +6,15 @@ import path from 'path';
 import cors from 'cors';
 import helmet from 'helmet';
 import lusca from 'lusca';
+import mongoSanitize from 'express-mongo-sanitize';
 import morgan from 'morgan';
 import compression from 'compression';
 import sassMiddleware from 'node-sass-middleware';
 
 /*** Config ******************************************************************/
 import logger from './config/logger';
-import { ENVIRONMENT, PORT, APP_NAME, CORS } from './config/config';
+import { ENVIRONMENT, PORT, APP_NAME, CORS, JWT_COOKIE } from './config/config';
 import connectDB from './config/mongo';
-// import postgres from './config/postgres';
-// import passport from './config/passport';
 
 /*** Routes ******************************************************************/
 import indexRoutes from './routes/index.routes';
@@ -26,6 +25,7 @@ import playgroundRoutes from './routes/playground.routes';
 /*** Other Imports ***********************************************************/
 import ErrorResponse from './shared/ErrorResponse';
 import errorHandler from './middlewares/errorHandler';
+import xssClean from './middlewares/xssClean';
 
 /*** Database Initialization *************************************************/
 connectDB();
@@ -48,17 +48,6 @@ app.use(
   )
 );
 
-// Security middleware
-app.disable('x-powered-by');
-if (CORS === true) {
-  app.use(cors());
-  logger.info('Cross-Origin Resource Sharing (CORS) enabled');
-}
-app.use(helmet());
-app.use(lusca.xframe('SAMEORIGIN'));
-//app.use(lusca.xframe('ALLOW-FROM ' + config.cookieDomain));
-app.use(lusca.xssProtection(true));
-
 // View engine
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
@@ -67,17 +56,21 @@ app.use(compression());
 app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.png')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
+if (JWT_COOKIE) {
+  app.use(cookieParser());
+}
 
-// Passport
-// app.use(passport.initialize());
-// app.use(passport.session());
-//
-// interface IRequest extends Request { user: any; }
-// app.use((req: IRequest, res: Response, next: NextFunction) => {
-//   res.locals.user = req.user;
-//   next();
-// });
+// Security middleware
+app.disable('x-powered-by');
+app.use(helmet());
+app.use(lusca.xframe('SAMEORIGIN'));
+app.use(lusca.xssProtection(true));
+app.use(xssClean());
+app.use(mongoSanitize());
+if (CORS === true) {
+  app.use(cors());
+  logger.info('Cross-Origin Resource Sharing (CORS) enabled');
+}
 
 // Headers
 app.use((req: Request, res: Response, next: NextFunction) => {

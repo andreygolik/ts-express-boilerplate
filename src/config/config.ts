@@ -38,6 +38,10 @@ if (!JWT_SECRET || JWT_SECRET.length < 16) {
   process.exit(2);
 }
 
+export const JWT_COOKIE = process.env.JWT_COOKIE === 'true';
+
+export const ALLOW_REGISTRATION = process.env.ALLOW_REGISTRATION === 'true';
+
 // Email configuration
 export const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD, FROM_EMAIL, FROM_NAME } = process.env;
 export const SMTP_SECURE = process.env.SMTP_SECURE !== 'false';

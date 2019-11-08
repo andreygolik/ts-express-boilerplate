@@ -6,7 +6,8 @@ import ErrorResponse from '../shared/ErrorResponse';
 import IRequest from '../interfaces/request';
 import { IUser, UserModel } from '../models/User';
 import { sendEmail, IEmailOptions } from '../utils/sendEmail';
-import { JWT_COOKIE_EXPIRE, ENVIRONMENT } from '../config/config';
+import { JWT_COOKIE_EXPIRE, ENVIRONMENT, JWT_COOKIE } from '../config/config';
+import { http } from 'winston';
 
 // @desc    Register user
 // @route   POST /api/v1/auth/register
@@ -49,6 +50,21 @@ export const login = asyncHandler(async (req: Request, res: Response, next: Next
   }
 
   sendTokenResponse(user, 200, res);
+});
+
+// @desc    Log out user / clear cookie
+// @route   GET /api/v1/auth/logout
+// @access  Private
+export const logout = asyncHandler(async (req: IRequest, res: Response) => {
+  res.cookie('token', 'none', {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true,
+  });
+
+  res.status(200).json({
+    success: true,
+    data: {},
+  });
 });
 
 // @desc    Get current logged user
@@ -186,19 +202,24 @@ const sendTokenResponse = (user: IUser, statusCode: number, res: Response) => {
   // Create token
   const token = user.getSignedJwtToken();
 
-  const expiresMs = +JWT_COOKIE_EXPIRE ? +JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000 : 0;
-  const options = {
-    expires: new Date(Date.now() + expiresMs),
-    httpOnly: true,
-    secure: true,
-  };
+  // Send JWT cookie (if enabled)
+  if (JWT_COOKIE) {
+    const expiresMs = +JWT_COOKIE_EXPIRE ? +JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000 : 0;
+    const options = {
+      expires: new Date(Date.now() + expiresMs),
+      httpOnly: true,
+      secure: true,
+    };
 
-  // Allow http in development
-  if (ENVIRONMENT === 'development') {
-    options.secure = false;
+    // Allow http in development
+    if (ENVIRONMENT === 'development') {
+      options.secure = false;
+    }
+
+    res.cookie('token', token, options);
   }
 
-  res.status(statusCode).cookie('token', token, options).json({
+  res.status(statusCode).json({
     success: true,
     token,
   });

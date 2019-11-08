@@ -5,7 +5,7 @@ import asyncHandler from './asyncHandler';
 import ErrorResponse from '../shared/ErrorResponse';
 import { UserModel, IUser } from '../models/User';
 import IRequest from '../interfaces/request';
-import { JWT_SECRET } from '../config/config';
+import { JWT_SECRET, JWT_COOKIE } from '../config/config';
 
 // Protect routes
 export const protect = asyncHandler(
@@ -18,9 +18,9 @@ export const protect = asyncHandler(
     ) {
       token = req.headers.authorization.split(' ')[1];
     }
-    // else if (req.cookies) {
-    //   token = req.cookies.token;
-    // }
+    else if (JWT_COOKIE && req.cookies) {
+      token = req.cookies.token;
+    }
 
     try {
       // Make sure token exists

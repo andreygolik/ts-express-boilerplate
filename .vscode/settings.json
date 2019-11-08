@@ -6,9 +6,11 @@
         "middlewares",
         "minlength",
         "resetpassword",
+        "sameorigin",
         "smtp",
         "stylesheets",
         "updatedetails",
-        "updatepassword"
+        "updatepassword",
+        "xframe"
     ]
 }
