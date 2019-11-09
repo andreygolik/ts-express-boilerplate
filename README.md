@@ -2,10 +2,23 @@
 
 REST API Server using NodeJS, Express, TypeScript and MongoDB.
 
-## Run in Production
+## Install Dependencies
 
-```
+```sh
 npm install
+```
+
+## Run Server
+
+### Run in development mode
+
+```sh
+npm run watch
+```
+
+### Run in production mode
+
+```sh
 npm run lint
 npm run build
 npm run test
