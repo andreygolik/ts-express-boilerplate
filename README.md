@@ -1,15 +1,18 @@
-# TypeScript/Express/NodeJS Server Boilerplate
+# TypeScript/Express API Server
+
+REST API Server using NodeJS, Express, TypeScript and MongoDB.
 
 ## Run in Production
 
 ```
 npm install
+npm run lint
 npm run build
 npm run test
-npm start --production
+npm start
 ```
 
-## Development Docker
+## Development in Docker container
 
 ### Using docker-compose
 
@@ -61,6 +64,6 @@ docker run \
   --env NODE_APP_NAME='API Server' \
   --env NODE_PORT=3000 \
   --env NODE_ALLOW_CORS=false \
-  --env POSTGRES_URI='127.0.0.1' \
+  --env MONGO_URI='127.0.0.1' \
   api-server
 ```

@@ -1,28 +1,8 @@
-NOW
+NEXT
 [ ] unhandledRejection should return 500
-[ ] setup postgres on dev server and make it works
-[ ] add postgres config
-[ ] add passport config
-[ ] tests
 [ ] improve mongo connection and add reconnect
+[ ] add tests
 
 LATER
-[ ] (?) replace sass compiler by middleware
-    and get rid of complicated 'watch' script
 [ ] configure eslint
 [ ] include eslint to build command
-
-DONE
-[x] update all dependencies to latest versions
-[x] remove jest configuration from package.json (or move)
-[x] merge package.json scripts
-[x] check if logger works
-[x] dev/prod mode switch
-[x] check if errorHandler works
-[x] add first hbs (remove ejs)
-[x] config
-[x] update winston to version 3 (if needed)
-[x] reconfigure logger
-[x] finish app.ts structure and features
-[x] stack trace in dev env only
-[x] finish Dockerfile
