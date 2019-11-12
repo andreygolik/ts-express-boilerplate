@@ -59,7 +59,7 @@ export const UserSchema = new Schema({
 UserSchema.pre('save', async function(this: IUser, next) {
   if (!this.isModified('password')) {
     next();
-  };
+  }
 
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
@@ -86,10 +86,13 @@ UserSchema.methods.getResetPasswordToken = async function(): Promise<string> {
   const resetToken = crypto.randomBytes(RESET_TOKEN_LENGTH).toString('hex');
 
   // Hash token and save it to resetPasswordToken field
-  this.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+  this.resetPasswordToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
 
   // Set expiration
-  this.resetPasswordExpire = Date.now() + 15 * 60 * 1000;  // 15min
+  this.resetPasswordExpire = Date.now() + 15 * 60 * 1000; // 15min
 
   return resetToken;
 };
@@ -100,6 +103,6 @@ UserSchema.methods.clearResetPasswordToken = function(): boolean {
   this.resetPasswordExpire = undefined;
 
   return true;
-}
+};
 
 export const UserModel: IUserModel = model<IUserDocument, IUserModel>('User', UserSchema);

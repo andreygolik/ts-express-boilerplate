@@ -9,18 +9,20 @@ const errorHandler = (err: ErrorResponse, req: Request, res: Response, next: Nex
 
   // Mongoose bad ObjectID
   if (err.name === 'CastError') {
-    const message = `Resource not found`;
+    const message = 'Resource not found';
     error = new ErrorResponse(message, 404);
   }
 
   // Mongoose duplicate field
   if (err.code === 11000) {
-    const message = `Duplicate field value`;
+    const message = 'Duplicate field value';
     error = new ErrorResponse(message, 400);
   }
 
   if (err.name === 'ValidationError') {
-    const message = Object.values((<any>err).errors).map((val: any) => val.message).toString();
+    const message = Object.values((<any>err).errors)
+      .map((val: any) => val.message)
+      .toString();
     error = new ErrorResponse(message, 400);
   }
 

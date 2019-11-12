@@ -15,7 +15,7 @@ import { ALLOW_REGISTRATION } from '../config/config';
 
 const router = express.Router();
 
-/* Auth Routes ****************************************************************/
+/* Auth Routes ************************************************************* */
 
 router.post('/login', login); // Login user
 router.get('/logout', logout); // Logout user / clear cookie
@@ -29,5 +29,5 @@ if (ALLOW_REGISTRATION) {
   router.post('/register', register); // Register new user
 }
 
-/******************************************************************************/
+/* ************************************************************************* */
 export default router;

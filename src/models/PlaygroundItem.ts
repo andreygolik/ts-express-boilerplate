@@ -18,26 +18,17 @@ export const PlaygroundItem = new Schema({
     required: [true, 'Please add a name'],
     unique: true,
     trim: true,
-    maxlength: [50, 'Name can not be more than 50 characters']
+    maxlength: [50, 'Name can not be more than 50 characters'],
   },
   email: {
     type: String,
     required: false,
-    match: [
-      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-      'Please add a valid email'
-    ]
+    match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please add a valid email'],
   },
   groups: {
     type: [String],
     required: true,
-    enum: [
-      'root',
-      'admin',
-      'sudo',
-      'ssh',
-      'users',
-    ]
+    enum: ['root', 'admin', 'sudo', 'ssh', 'users'],
   },
   rate: {
     type: Number,
@@ -54,5 +45,7 @@ export const PlaygroundItem = new Schema({
   },
 });
 
-export const PlaygroundItemModel: IPlaygroundItemModel =
-  model<IPlaygroundItemDocument, IPlaygroundItemModel>('PlaygroundItem', PlaygroundItem);
+export const PlaygroundItemModel: IPlaygroundItemModel = model<IPlaygroundItemDocument, IPlaygroundItemModel>(
+  'PlaygroundItem',
+  PlaygroundItem
+);

@@ -7,7 +7,6 @@ import IRequest from '../interfaces/request';
 import { IUser, UserModel } from '../models/User';
 import { sendEmail, IEmailOptions } from '../utils/sendEmail';
 import { JWT_COOKIE_EXPIRE, ENVIRONMENT, JWT_COOKIE } from '../config/config';
-import { http } from 'winston';
 
 // @desc    Register user
 // @route   POST /api/v1/auth/register
@@ -170,7 +169,10 @@ export const resetPassword = asyncHandler(async (req: IRequest, res: Response, n
   }
 
   // Hash received token before comparing
-  const resetPasswordToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
+  const resetPasswordToken = crypto
+    .createHash('sha256')
+    .update(req.params.token)
+    .digest('hex');
 
   const user: IUser = await UserModel.findOne({
     resetPasswordToken,

@@ -4,12 +4,12 @@ import { Request, Response } from 'express';
 // @route   GET /
 // @access  Public
 export const index = (req: Request, res: Response) => {
-  res.render('index', { title: 'Index Page'});
+  res.render('index', { title: 'Index Page' });
 };
 
 // @desc    Home page
 // @route   GET /home
 // @access  Private
 export const home = (req: Request, res: Response) => {
-  res.render('home', { title: 'Home Page'});
+  res.render('home', { title: 'Home Page' });
 };

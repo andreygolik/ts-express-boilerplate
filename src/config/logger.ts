@@ -8,18 +8,18 @@ const default_console_level = prod ? 'error' : 'debug';
 const fileFormat = format.combine(
   format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
   format.printf((info) => {
-    const message = typeof(info.message) === 'object' ? JSON.stringify(info.message): info.message;
+    const message = typeof info.message === 'object' ? JSON.stringify(info.message) : info.message;
     return `${info.timestamp} ${info.level}: ${message}`;
-  }),
+  })
 );
 
 const consoleFormat = format.combine(
   format.colorize(),
   format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
   format.printf((info) => {
-    const message = typeof(info.message) === 'object' ? JSON.stringify(info.message): info.message;
+    const message = typeof info.message === 'object' ? JSON.stringify(info.message) : info.message;
     return prod ? `${info.timestamp} ${info.level}: ${message}` : `${info.level}: ${message}`;
-  }),
+  })
 );
 
 const transports = {
@@ -38,16 +38,12 @@ const transports = {
   //   level: 'error',
   //   filename: './logs/exceptions.log',
   // }),
-}
+};
 
 const options: winston.LoggerOptions = {
   level: default_level,
   format: fileFormat,
-  transports: [
-    transports.console,
-    transports.combined,
-    transports.error,
-  ],
+  transports: [transports.console, transports.combined, transports.error],
   exceptionHandlers: [
     transports.console,
     transports.combined,

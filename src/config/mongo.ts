@@ -8,11 +8,11 @@ const options: mongoose.ConnectionOptions = {
   useCreateIndex: true,
   useFindAndModify: false,
   useUnifiedTopology: true,
-}
+};
 
 const connectDB = async () => {
   const conn: Mongoose = await mongoose.connect(MONGO_URI, options);
   logger.info(`MongoDB Connected: ${(<any>conn.connection).host}`);
-}
+};
 
 export default connectDB;

@@ -5,7 +5,7 @@ import { protect } from '../middlewares/auth';
 
 const router = express.Router();
 
-/* Index Routes ***************************************************************/
+/* Index Routes ************************************************************ */
 
 // Index page
 router.get('/', index);
@@ -13,5 +13,5 @@ router.get('/', index);
 // Home page
 router.get('/home', protect, home);
 
-/******************************************************************************/
+/* ************************************************************************* */
 export default router;

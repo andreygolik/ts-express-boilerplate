@@ -1,5 +1,6 @@
 import * as supertest from 'supertest';
 import * as app from '../src/app';
+
 const req = supertest(app);
 
 describe('GET /', () => {

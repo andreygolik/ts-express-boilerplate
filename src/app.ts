@@ -13,26 +13,26 @@ import morgan from 'morgan';
 import compression from 'compression';
 import sassMiddleware from 'node-sass-middleware';
 
-/*** Config ******************************************************************/
+/* Config ****************************************************************** */
 import logger from './config/logger';
 import { ENVIRONMENT, PORT, APP_NAME, CORS, JWT_COOKIE } from './config/config';
 import connectDB from './config/mongo';
 
-/*** Routes ******************************************************************/
+/* Routes ****************************************************************** */
 import indexRoutes from './routes/index.routes';
 import authRoutes from './routes/auth.routes';
 import usersRoutes from './routes/users.routes';
 import playgroundRoutes from './routes/playground.routes';
 
-/*** Other Imports ***********************************************************/
+/* Other Imports *********************************************************** */
 import ErrorResponse from './shared/ErrorResponse';
 import errorHandler from './middlewares/errorHandler';
 import xssClean from './middlewares/xssClean';
 
-/*** Database Initialization *************************************************/
+/* Database Initialization ************************************************* */
 connectDB();
 
-/*** Express configuration ***************************************************/
+/* Express configuration *************************************************** */
 const app: Express = express();
 
 app.set('env', ENVIRONMENT);
@@ -75,10 +75,12 @@ app.use(hpp());
 // Sanitize data
 app.use(mongoSanitize());
 // Rate limiting
-app.use(rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-})); // apply to all requests
+app.use(
+  rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
+  })
+); // apply to all requests
 // Enable CORS (for public API)
 if (CORS === true) {
   app.use(cors());
@@ -89,18 +91,21 @@ if (CORS === true) {
 app.use((req: Request, res: Response, next: NextFunction) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Access-Control-Allow-Credentials');
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization, Access-Control-Allow-Credentials'
+  );
   res.header('Access-Control-Allow-Credentials', 'true');
   next();
 });
 
-/*** Routes ******************************************************************/
+/* Routes ****************************************************************** */
 app.use('/', indexRoutes);
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', usersRoutes);
 
 // if (ENVIRONMENT === "development") {
-  app.use('/api/v1/playground', playgroundRoutes);
+app.use('/api/v1/playground', playgroundRoutes);
 // }
 
 // Static routes
@@ -110,15 +115,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 // compiles SCSS on the fly and respond with CSS
 // only if CSS is missing in public folder, only in development
 if (ENVIRONMENT === 'development') {
-  app.use(sassMiddleware({
-    src: path.join(__dirname, 'public'),
-    response: true,
-    outputStyle: 'expanded',
-    debug: false,
-  }));
+  app.use(
+    sassMiddleware({
+      src: path.join(__dirname, 'public'),
+      response: true,
+      outputStyle: 'expanded',
+      debug: false,
+    })
+  );
 }
 
-/*** Error Handler ***********************************************************/
+/* Error Handler *********************************************************** */
 // 404
 app.use((req, res, next: NextFunction) => next(new ErrorResponse('Not Found', 404)));
 
@@ -130,5 +137,5 @@ process.on('unhandledRejection', (err, promise) => {
   logger.error(`unhandledRejection: ${err}`);
 });
 
-/*****************************************************************************/
+/* ************************************************************************* */
 export default app;
