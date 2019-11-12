@@ -1,3 +1,6 @@
+/* eslint node/no-unpublished-import: 0 */
+/* eslint import/no-extraneous-dependencies: 0 */
+
 import shell from 'shelljs';
 
 shell.cp('-R', 'src/views', 'dist/');

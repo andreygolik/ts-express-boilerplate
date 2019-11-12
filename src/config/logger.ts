@@ -7,12 +7,19 @@ const default_console_level = prod ? 'error' : 'debug';
 
 const fileFormat = format.combine(
   format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-  format.printf((info) => `${info.timestamp} ${info.level}: ${info.message}`)
+  format.printf((info) => {
+    const message = typeof(info.message) === 'object' ? JSON.stringify(info.message): info.message;
+    return `${info.timestamp} ${info.level}: ${message}`;
+  }),
 );
 
 const consoleFormat = format.combine(
   format.colorize(),
-  format.printf((info) => `${info.level}: ${info.message}`),
+  format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+  format.printf((info) => {
+    const message = typeof(info.message) === 'object' ? JSON.stringify(info.message): info.message;
+    return prod ? `${info.timestamp} ${info.level}: ${message}` : `${info.level}: ${message}`;
+  }),
 );
 
 const transports = {

@@ -6,9 +6,11 @@
     "node_modules",
     "logs/",
     "test/",
+    "dist/",
     "**/*.test.ts",
     "**/*.spec.ts",
     ".git",
+    ".vscode/",
     "src/public"
   ],
   "exec": "NODE_ENV=development ts-node src/server.ts"

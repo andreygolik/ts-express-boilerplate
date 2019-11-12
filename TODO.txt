@@ -2,6 +2,7 @@ NEXT
 [ ] unhandledRejection should return 500
 [ ] improve mongo connection and add reconnect
 [ ] add tests
+[ ] add express-validator
 
 LATER
 [ ] configure eslint
