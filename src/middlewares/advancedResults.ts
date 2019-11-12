@@ -11,7 +11,7 @@ and provided as an example only.
 Possibly contains bugs and vulnerabilities.
 */
 
-const advancedResults = (model: mongoose.Model<any, any>, populate?: string | false) => async (
+const advancedResults = (model: mongoose.Model<mongoose.Document, {}>, populate?: string | false) => async (
   req: Request,
   res: AdvancedResultsResponse,
   next: NextFunction

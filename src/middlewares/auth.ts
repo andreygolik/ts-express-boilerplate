@@ -25,9 +25,14 @@ export const protect = asyncHandler(async (req: UserRequest, res: Response, next
     }
 
     // Verify token
-    const decoded: any = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET);
+    if (typeof decoded !== 'object') {
+      throw new Error();
+    }
 
-    req.user = await UserModel.findById(decoded.id);
+    const { id } = decoded as { id?: string };
+
+    req.user = await UserModel.findById(id);
 
     return next();
   } catch (err) {

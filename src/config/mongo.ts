@@ -1,4 +1,4 @@
-import mongoose, { Mongoose } from 'mongoose';
+import mongoose, { Connection } from 'mongoose';
 
 import { MONGO_URI } from './config';
 import logger from './logger';
@@ -10,9 +10,14 @@ const options: mongoose.ConnectionOptions = {
   useUnifiedTopology: true,
 };
 
+interface MongooseConnection extends Connection {
+  host?: string;
+}
+
 const connectDB = async () => {
-  const conn: Mongoose = await mongoose.connect(MONGO_URI, options);
-  logger.info(`MongoDB Connected: ${conn.connection}`);
+  const { connection } = await mongoose.connect(MONGO_URI, options);
+  const { host } = connection as MongooseConnection;
+  logger.info(`MongoDB Connected to ${host}`);
 };
 
 export default connectDB;

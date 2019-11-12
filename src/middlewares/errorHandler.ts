@@ -3,6 +3,10 @@ import { Request, Response } from 'express';
 import ErrorResponse from '../shared/ErrorResponse';
 import logger from '../config/logger';
 
+export interface ValidationErrors {
+  errors?: { message: string }[];
+}
+
 const errorHandler = (err: ErrorResponse, req: Request, res: Response) => {
   let error = { ...err };
   error.message = err.message;
@@ -20,8 +24,8 @@ const errorHandler = (err: ErrorResponse, req: Request, res: Response) => {
   }
 
   if (err.name === 'ValidationError') {
-    const message = Object.values((err as any).errors)
-      .map((val: any) => val.message)
+    const message = Object.values((err as ValidationErrors).errors)
+      .map((val) => val.message)
       .toString();
     error = new ErrorResponse(message, 400);
   }
