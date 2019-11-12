@@ -1,0 +1,43 @@
+plugins:
+  - prettier
+parser: '@typescript-eslint/parser'
+extends:
+  - airbnb-base
+  - plugin:@typescript-eslint/recommended
+  - plugin:node/recommended
+  - prettier
+parserOptions:
+  ecmaVersion: 2018
+  sourceType: module
+settings:
+  import/resolver:
+    node:
+      extensions: [ .js, .ts ]
+rules:
+  prettier/prettier: error
+  semi: [ error, always ]
+  quotes: [ error, single ]
+  no-unused-vars: warn
+  no-console: warn
+  no-process-exit: 'off'
+  func-names: 'off'
+  '@typescript-eslint/explicit-function-return-type': 'off'
+  '@typescript-eslint/no-explicit-any': warn
+  '@typescript-eslint/no-inferrable-types': 'off'
+  node/no-unsupported-features/es-syntax:
+    - error
+    -
+      ignores:
+        - modules
+  node/no-missing-import:
+    - error
+    -
+      tryExtensions: [ .ts, .js ]
+overrides:
+  -
+    files: [ '*.test.ts' ]
+    env:
+      jest: true
+    rules:
+      node/no-unpublished-import: 'off'
+      import/no-extraneous-dependencies: 'off'
