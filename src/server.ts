@@ -1,6 +1,11 @@
+/* eslint no-console: 0 */
+
 import { createServer, Server } from 'http';
 
 import app from './app';
+
+const server: Server = createServer(app);
+const port = app.get('port') || 3000;
 
 // Event listener for HTTP server "listening" event.
 const onListening = () => {
@@ -22,19 +27,14 @@ const onError = (error: NodeJS.ErrnoException) => {
   switch (error.code) {
     case 'EACCES':
       console.error(`${bind} requires elevated privileges`);
-      process.exit(1);
-      break;
+      return process.exit(1);
     case 'EADDRINUSE':
       console.error(`${bind} is already in use`);
-      process.exit(1);
-      break;
+      return process.exit(1);
     default:
       throw error;
   }
 };
-
-const server: Server = createServer(app);
-const port = app.get('port') || 3000;
 
 server.on('listening', onListening);
 server.on('error', onError);

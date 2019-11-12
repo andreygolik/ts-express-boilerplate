@@ -1,6 +1,8 @@
+/* eslint semi: 0 */
+
 import { Response } from 'express';
 
-interface IAdvancedResultsResponse extends Response {
+export default interface AdvancedResultsResponse extends Response {
   advancedResults: {
     success: boolean;
     count: number;
@@ -8,8 +10,6 @@ interface IAdvancedResultsResponse extends Response {
       next?: { page: number; limit: number };
       prev?: { page: number; limit: number };
     };
-    data: any;
+    data: object;
   };
 }
-
-export default IAdvancedResultsResponse;

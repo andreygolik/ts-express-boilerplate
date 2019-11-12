@@ -12,7 +12,7 @@ if (fs.existsSync('.env')) {
 }
 
 export const ENVIRONMENT = process.env.NODE_ENV || 'development';
-const prod = ENVIRONMENT === 'production'; // Anything else is treated as 'dev'
+// const prod = ENVIRONMENT === 'production'; // Anything else is treated as 'dev'
 
 export const PORT = process.env.NODE_PORT || 3000;
 

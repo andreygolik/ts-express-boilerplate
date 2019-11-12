@@ -1,8 +1,8 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, NextFunction } from 'express';
 import mongoose from 'mongoose';
 
 import ErrorResponse from '../shared/ErrorResponse';
-import IAdvancedResultsResponse from '../interfaces/advancedResultsResponse';
+import AdvancedResultsResponse from '../interfaces/AdvancedResultsResponse';
 
 /*
 ATTENTION
@@ -13,7 +13,7 @@ Possibly contains bugs and vulnerabilities.
 
 const advancedResults = (model: mongoose.Model<any, any>, populate?: string | false) => async (
   req: Request,
-  res: IAdvancedResultsResponse,
+  res: AdvancedResultsResponse,
   next: NextFunction
 ) => {
   let query;
@@ -115,7 +115,7 @@ const advancedResults = (model: mongoose.Model<any, any>, populate?: string | fa
     data: results,
   };
 
-  next();
+  return next();
 };
 
 export default advancedResults;

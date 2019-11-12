@@ -133,7 +133,7 @@ app.use((req, res, next: NextFunction) => next(new ErrorResponse('Not Found', 40
 app.use(errorHandler);
 
 // Handle unhandled promise rejections
-process.on('unhandledRejection', (err, promise) => {
+process.on('unhandledRejection', (err) => {
   logger.error(`unhandledRejection: ${err}`);
 });
 

@@ -1,7 +1,18 @@
-// Inspired by https://github.com/jsonmaur/xss-clean
-
 import { Request, Response, NextFunction } from 'express';
 import { inHTMLData } from 'xss-filters';
+
+const cleanObject = (data: object) => {
+  if (typeof data !== 'object') {
+    return {};
+  }
+
+  let json = JSON.stringify(data);
+  json = inHTMLData(json).trim();
+
+  return JSON.parse(json);
+};
+
+const clean = (data: object | string = '') => (typeof data === 'object' ? cleanObject(data) : inHTMLData(data).trim());
 
 const xssClean = () => (req: Request, res: Response, next: NextFunction) => {
   if (req.body) {
@@ -16,27 +27,7 @@ const xssClean = () => (req: Request, res: Response, next: NextFunction) => {
     req.params = clean(req.params);
   }
 
-  next();
-};
-
-/**
- * Clean for xss.
- * @param {string/object} data - The value to sanitize
- * @return {string/object} The sanitized value
- */
-const clean = (data: any = '') => {
-  let isObject = false;
-  if (typeof data === 'object') {
-    data = JSON.stringify(data);
-    isObject = true;
-  }
-
-  data = inHTMLData(data).trim();
-  if (isObject) {
-    data = JSON.parse(data);
-  }
-
-  return data;
+  return next();
 };
 
 export default xssClean;

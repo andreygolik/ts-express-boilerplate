@@ -3,6 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 import asyncHandler from '../middlewares/asyncHandler';
 import ErrorResponse from '../shared/ErrorResponse';
 import { PlaygroundItemModel } from '../models/PlaygroundItem';
+import AdvancedResultsResponse from '../interfaces/AdvancedResultsResponse';
 
 // @desc    Throw Test Error
 // @route   GET /playground/throw
@@ -23,7 +24,7 @@ export const throwError = (req: Request, res: Response, next: NextFunction) => {
 // @desc    Echo Request
 // @route   ANY /playground/echo
 // @access  Public
-export const echo = (req: Request, res: Response, next: NextFunction) => {
+export const echo = (req: Request, res: Response) => {
   const payload = {
     method: req.method,
     headers: req.headers,
@@ -42,10 +43,9 @@ export const echo = (req: Request, res: Response, next: NextFunction) => {
 // @desc    Get all items
 // @route   GET /playground/items
 // @access  Public
-export const getItems = asyncHandler(async (req: Request, res: any, next: NextFunction) => {
-  const items = await PlaygroundItemModel.find();
-
-  res.status(200).json(res.advancedResults);
+export const getItems = asyncHandler(async (req: Request, res: AdvancedResultsResponse) => {
+  await PlaygroundItemModel.find();
+  return res.status(200).json(res.advancedResults);
 });
 
 // @desc    Get single item
@@ -58,7 +58,7 @@ export const getItem = asyncHandler(async (req: Request, res: Response, next: Ne
     return next(new ErrorResponse(`Item not found with ID of ${req.params.id}`, 404));
   }
 
-  res.status(200).json({
+  return res.status(200).json({
     success: true,
     data: item,
   });
@@ -67,10 +67,10 @@ export const getItem = asyncHandler(async (req: Request, res: Response, next: Ne
 // @desc    Create new item
 // @route   POST /playground/items
 // @access  Public
-export const createItem = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+export const createItem = asyncHandler(async (req: Request, res: Response) => {
   const item = await PlaygroundItemModel.create(req.body);
 
-  res.status(201).json({
+  return res.status(201).json({
     success: true,
     date: item,
   });
@@ -89,7 +89,7 @@ export const updateItem = asyncHandler(async (req: Request, res: Response, next:
     return next(new ErrorResponse(`Item not found with ID of ${req.params.id}`, 404));
   }
 
-  res.status(200).json({
+  return res.status(200).json({
     success: true,
     data: item,
   });
@@ -105,7 +105,7 @@ export const deleteItem = asyncHandler(async (req: Request, res: Response, next:
     return next(new ErrorResponse(`Item not found with ID of ${req.params.id}`, 404));
   }
 
-  res.status(200).json({
+  return res.status(200).json({
     success: true,
     data: item,
   });

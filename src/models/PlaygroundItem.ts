@@ -1,6 +1,6 @@
 import { Document, Schema, Model, model } from 'mongoose';
 
-export interface IPlaygroundItemDocument extends Document {
+export interface PlaygroundItem extends Document {
   name: string;
   email?: string;
   group: [string];
@@ -8,11 +8,7 @@ export interface IPlaygroundItemDocument extends Document {
   text: string;
 }
 
-export interface IPlaygroundItem extends IPlaygroundItemDocument {}
-
-export interface IPlaygroundItemModel extends Model<IPlaygroundItem> {}
-
-export const PlaygroundItem = new Schema({
+export const PlaygroundItemSchema = new Schema({
   name: {
     type: String,
     required: [true, 'Please add a name'],
@@ -23,7 +19,7 @@ export const PlaygroundItem = new Schema({
   email: {
     type: String,
     required: false,
-    match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please add a valid email'],
+    match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please add a valid email'],
   },
   groups: {
     type: [String],
@@ -45,7 +41,7 @@ export const PlaygroundItem = new Schema({
   },
 });
 
-export const PlaygroundItemModel: IPlaygroundItemModel = model<IPlaygroundItemDocument, IPlaygroundItemModel>(
+export const PlaygroundItemModel: Model<PlaygroundItem> = model<PlaygroundItem, Model<PlaygroundItem>>(
   'PlaygroundItem',
-  PlaygroundItem
+  PlaygroundItemSchema
 );

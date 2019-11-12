@@ -4,13 +4,13 @@ import SMTPTransport from 'nodemailer/lib/smtp-transport';
 import { SMTP_HOST, SMTP_PORT, SMTP_SECURE, SMTP_USER, SMTP_PASSWORD, FROM_EMAIL, FROM_NAME } from '../config/config';
 import logger from '../config/logger';
 
-export interface IEmailOptions {
+export interface EmailOptions {
   email: string;
   subject: string;
   message: string;
 }
 
-export const sendEmail = async (options: IEmailOptions) => {
+const sendEmail = async (options: EmailOptions) => {
   const transportOptions: SMTPTransport.Options = {
     host: SMTP_HOST,
     port: Number(SMTP_PORT),
@@ -38,3 +38,5 @@ export const sendEmail = async (options: IEmailOptions) => {
       throw err;
     });
 };
+
+export default sendEmail;

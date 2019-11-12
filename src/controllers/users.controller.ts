@@ -1,14 +1,13 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 
 import asyncHandler from '../middlewares/asyncHandler';
-import ErrorResponse from '../shared/ErrorResponse';
-import { IUser, UserModel } from '../models/User';
-import IAdvancedResultsResponse from '../interfaces/advancedResultsResponse';
+import { UserModel } from '../models/User';
+import AdvancedResultsResponse from '../interfaces/AdvancedResultsResponse';
 
 // @desc    Get all users
 // @route   GET /api/v1/users
 // @access  Private/Admin
-export const getUsers = asyncHandler(async (req: Request, res: IAdvancedResultsResponse) => {
+export const getUsers = asyncHandler(async (req: Request, res: AdvancedResultsResponse) => {
   res.status(200).json(res.advancedResults);
 });
 

@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 
 import { JWT_SECRET, JWT_EXPIRE } from '../config/config';
 
-export interface IUserDocument extends Document {
+export interface UserDocument extends Document {
   email: string;
   name: string;
   role: string;
@@ -14,14 +14,12 @@ export interface IUserDocument extends Document {
   resetPasswordExpire?: Date;
 }
 
-export interface IUser extends IUserDocument {
+export interface User extends UserDocument {
   matchPassword(enteredPassword: string): Promise<boolean>;
   getSignedJwtToken(): string;
   getResetPasswordToken(): Promise<string>;
   clearResetPasswordToken(): boolean;
 }
-
-export interface IUserModel extends Model<IUser> {}
 
 export const UserSchema = new Schema({
   name: {
@@ -34,7 +32,7 @@ export const UserSchema = new Schema({
     type: String,
     required: [true, 'Please add an email'],
     unique: true,
-    match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please add a valid email'],
+    match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please add a valid email'],
   },
   role: {
     type: String,
@@ -56,7 +54,7 @@ export const UserSchema = new Schema({
 });
 
 // Encrypt password using bcrypt
-UserSchema.pre('save', async function(this: IUser, next) {
+UserSchema.pre('save', async function(this: User, next) {
   if (!this.isModified('password')) {
     next();
   }
@@ -68,14 +66,15 @@ UserSchema.pre('save', async function(this: IUser, next) {
 
 // Sign JWT and return
 UserSchema.methods.getSignedJwtToken = function(): string {
-  return jwt.sign({ id: this._id }, JWT_SECRET, {
+  return jwt.sign({ id: this.id }, JWT_SECRET, {
     expiresIn: JWT_EXPIRE,
   });
 };
 
 // Match user entered password to hashed password in database
 UserSchema.methods.matchPassword = async function(enteredPassword: string): Promise<boolean> {
-  return await bcrypt.compare(enteredPassword, this.password);
+  const isMatch = await bcrypt.compare(enteredPassword, this.password);
+  return isMatch;
 };
 
 export const RESET_TOKEN_LENGTH = 32;
@@ -105,4 +104,4 @@ UserSchema.methods.clearResetPasswordToken = function(): boolean {
   return true;
 };
 
-export const UserModel: IUserModel = model<IUserDocument, IUserModel>('User', UserSchema);
+export const UserModel: Model<User> = model<UserDocument, Model<User>>('User', UserSchema);

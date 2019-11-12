@@ -1,9 +1,8 @@
-import * as winston from 'winston';
-import { format } from 'winston';
+import winston, { format } from 'winston';
 
 const prod = process.env.NODE_ENV === 'production';
-const default_level = prod ? 'verbose' : 'debug';
-const default_console_level = prod ? 'error' : 'debug';
+const defaultLevel = prod ? 'verbose' : 'debug';
+const defaultConsoleLevel = prod ? 'error' : 'debug';
 
 const fileFormat = format.combine(
   format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
@@ -24,7 +23,7 @@ const consoleFormat = format.combine(
 
 const transports = {
   console: new winston.transports.Console({
-    level: default_console_level,
+    level: defaultConsoleLevel,
     format: consoleFormat,
   }),
   combined: new winston.transports.File({
@@ -41,7 +40,7 @@ const transports = {
 };
 
 const options: winston.LoggerOptions = {
-  level: default_level,
+  level: defaultLevel,
   format: fileFormat,
   transports: [transports.console, transports.combined, transports.error],
   exceptionHandlers: [
