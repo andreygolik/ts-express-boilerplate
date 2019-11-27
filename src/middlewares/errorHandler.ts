@@ -1,4 +1,7 @@
-import { Request, Response } from 'express';
+/* eslint no-unused-vars: 0 */
+/* eslint @typescript-eslint/no-unused-vars: 0 */
+
+import { Request, Response, NextFunction } from 'express';
 
 import ErrorResponse from '../shared/ErrorResponse';
 import logger from '../config/logger';
@@ -7,7 +10,7 @@ export interface ValidationErrors {
   errors?: { message: string }[];
 }
 
-const errorHandler = (err: ErrorResponse, req: Request, res: Response) => {
+const errorHandler = (err: ErrorResponse, req: Request, res: Response, next: NextFunction) => {
   let error = { ...err };
   error.message = err.message;
 
@@ -39,8 +42,10 @@ const errorHandler = (err: ErrorResponse, req: Request, res: Response) => {
   if (error.statusCode >= 500) {
     if (process.env.NODE_ENV === 'development') {
       // Log and provide the stack in development
-      logger.debug(err.stack);
-      error.stack = err.stack;
+      if (err.stack) {
+        logger.debug(err.stack);
+        error.stack = err.stack;
+      }
     } else {
       // Hide details if not in development
       error.message = 'Server Error';
